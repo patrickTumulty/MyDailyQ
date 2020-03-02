@@ -6,8 +6,6 @@ def reset_memory():
     mem = []
     save('assignments', mem)
 
-
-
 def load(name):
     '''
     This method creates and loads a new journal.
@@ -18,7 +16,6 @@ def load(name):
     filename = get_full_pathname(name)
     data = None
     if os.path.exists(filename):
-        # print("Loading data from {}".format(filename))
         with open(filename, 'rb') as fin:
             data = pickle.load(fin)
     return data
@@ -26,7 +23,7 @@ def load(name):
 
 def save(name, data):
     filename = get_full_pathname(name)
-    print("....... saving to: {}".format(filename))
+    print("... saving to: {}".format(filename))
     with open(filename, 'wb') as file_out:
         pickle.dump(data, file_out, pickle.HIGHEST_PROTOCOL)
 

@@ -93,17 +93,18 @@ def sort_assignments(assignments):
     completed_list = []
     obj_list = []
     for idx, obj in enumerate(assignments):
-        num = (obj.time_till_due).split(" ")
-        if num[1] == "Day" or num[1] == "Days":
-            days_list.append((idx, int(num[0])))
-        elif num[1] == "Hour" or num[1] == "Hours":
-            hours_list.append((idx, int(num[0])))
-        elif num[1] == "Minutes":
-            minutes_list.append((idx, int(num[0])))
-        elif num[1] == "Due":
-            over_due_list.append(idx)
-        elif num[1] == "Completed":
+        if obj.time_till_due == "Completed":
             completed_list.append(idx)
+        else:
+            num = (obj.time_till_due).split(" ")
+            if num[1] == "Day" or num[1] == "Days":
+                days_list.append((idx, int(num[0])))
+            elif num[1] == "Hour" or num[1] == "Hours":
+                hours_list.append((idx, int(num[0])))
+            elif num[1] == "Minutes":
+                minutes_list.append((idx, int(num[0])))
+            elif num[1] == "Due":
+                over_due_list.append(idx)
     days_list.sort(key=_custom_sort)
     hours_list.sort(key=_custom_sort)
     minutes_list.sort(key=_custom_sort)

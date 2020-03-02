@@ -9,18 +9,17 @@ string.ascii_uppercase
 def main():
     app = MainWindow()
 
-
 class MainWindow:
     def __init__(self):
-        self.print_header()
+        # self.print_header()
         self.remDict = {}
         self.populate_reminder_list()
 
     def populate_reminder_list(self):
         self.print_header()
         self.reminders = self.load_data()
-        self.reminders = reminder.sort_assignments(self.reminders)
         self.reminders = self.update_items_in_listview(self.reminders)
+        self.reminders = reminder.sort_assignments(self.reminders)
         for i, item in enumerate(self.reminders):
             self.remDict[i + 1] = item
             print("* [{}] {} ".format(i + 1, self.format_list_string(item)))
@@ -48,8 +47,10 @@ class MainWindow:
         self.clear_screen()
         today = datetime.datetime.today().strftime("%m / %d / %Y")
         self.headerString = "*  {}  |  {}  |  {}  *".format("My Daily Q", name, today)
-        self.line = "-"
-        for i in range(len(self.headerString)-1):
+        self.line = ""
+        c, r = os.get_terminal_size()
+        # for i in range(len(self.headerString)-1):
+        for i in range(c):
             self.line += "-"
         print(self.line)
         print(self.headerString)
@@ -101,9 +102,22 @@ class MainWindow:
 
     def print_detail_window(self, obj):
         self.print_header()
-        # TODO: Format description and title to only be as wide as the header 
-        print("{}\n\n{}\n\nDue Date:    {}\nDateCreated: {}".format(obj.title, obj.description, obj.due_date.date(), obj.date_created.date()))
+        print("{}\n\n{}\n\nDue Date:    {}\nDateCreated: {}".format(self.wrap_text(obj.title, len(self.line)), self.wrap_text(obj.description,len(self.line)), obj.due_date.date(), obj.date_created.date()))
         self.input_interface('dw')
+
+    def wrap_text(self, text, width):
+        if len(text) <= width:
+            return text
+        else:
+            ftext = ""
+            linNum = int(len(text)/width)
+            for i in range(linNum):
+                if i == 0:
+                    ftext = text[0:width] + "\n"
+                else:
+                    ftext += text[(i * width):(i * width)+width] + "\n"  
+            ftext += text[(width*(linNum - 1)) + width:]
+        return ftext  
 
     def print_add_window(self):
         self.clear_screen()
@@ -111,10 +125,18 @@ class MainWindow:
         title = input("Title : ")
         description = input("Description : ")
         print("* Enter Due Date *")
-        # TODO: insert while loop to ensure that user doesn't enter letters where there should be numbers
-        month = input("Month : ")
-        day = input("Day : ")
-        year = input("Year : ")
+        while(True):
+            #TODO: input a "c" command which stands for current month. Same 'C' command for year
+            month = input("Month : ")
+            #TODO: Add command for quickly adding a 1 week time interval (So I don't always have to look up date)
+            day = input("Day : ")
+            year = input("Year : ")
+            if month.isdigit() == True and day.isdigit() == True and year.isdigit() is True:
+                break
+            else:
+                print("Invalid Input")
+                print("Please enter whole number integers for the month day and year")
+                print("Example: September 18, 2019 >>> M = 9, D = 18, Y = 2019")
         rem = reminder.Assignment(title, description)
         rem.set_due_date(int(day), int(month), int(year))
         rem.update_time_till_due()
@@ -138,7 +160,7 @@ class MainWindow:
     def print_obj(self, obj):
         self.clear_screen()
         self.print_header()
-        print("{}\n\n{}\n\nDue Date:    {}\nDateCreated: {}".format(obj.title, obj.description, obj.due_date.date(), obj.date_created.date()))
+        print("{}\n\n{}\n\nDue Date:    {}\nDateCreated: {}".format(self.wrap_text(obj.title, len(self.line)), self.wrap_text(obj.description,len(self.line)), obj.due_date.date(), obj.date_created.date()))
 
     def update_items_in_listview(self, assignments):
         for obj in assignments:
@@ -150,9 +172,7 @@ class MainWindow:
 
     def save_data(self):
         fio.save('assignments', self.reminders)
-
-        
-
+ 
 
 if __name__ == "__main__":
     main()
