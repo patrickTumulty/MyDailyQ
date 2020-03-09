@@ -41,7 +41,7 @@ class MainWindow:
                 spacer += " "
             return "{}{}({})".format(obj.title, spacer, obj.time_till_due)
         elif (titleLen + (dueLen+2)) > totalLen:
-            return "{}{}{}({})".format(obj.title[0:23], '...', spacer, obj.time_till_due)
+            return "{}{}({})".format(obj.title[0:totalLen - (dueLen + 6)], '... ', obj.time_till_due)
 
     def print_header(self, name="Patrick Tumulty"):
         self.clear_screen()
